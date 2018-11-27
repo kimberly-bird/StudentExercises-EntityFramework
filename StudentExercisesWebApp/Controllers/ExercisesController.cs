@@ -49,7 +49,7 @@ namespace StudentExercisesWebApp.Controllers
                     .Include(se => se.Student)
                     .Where(se => se.ExerciseId == exercise.ExerciseId);
 
-            // get exercise details (name, language, etc.)
+            // get student details
             IEnumerable<Student> students = studentExercises.Select(s => s.Student);
 
             ExerciseDetailViewModel viewmodel = new ExerciseDetailViewModel()

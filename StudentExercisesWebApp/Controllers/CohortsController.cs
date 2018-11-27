@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentExercisesWebApp.Data;
 using StudentExercisesWebApp.Models;
+using StudentExercisesWebApp.Models.ViewModels;
 
 namespace StudentExercisesWebApp.Controllers
 {
@@ -33,14 +34,25 @@ namespace StudentExercisesWebApp.Controllers
                 return NotFound();
             }
 
+            // get single cohort with list of students
             var cohort = await _context.Cohorts
+                .Include(s => s.Students)
                 .FirstOrDefaultAsync(m => m.CohortId == id);
+
             if (cohort == null)
             {
                 return NotFound();
             }
 
-            return View(cohort);
+
+
+            CohortDetailViewModel viewmodel = new CohortDetailViewModel()
+            {
+                Cohort = cohort,
+                Students = cohort.Students.ToList()
+            };
+
+            return View(viewmodel);
         }
 
         // GET: Cohorts/Create

@@ -1,24 +1,32 @@
-﻿@model StudentExercisesWebApp.Models.Cohort
+﻿@model StudentExercisesWebApp.Models.ViewModels.CohortDetailViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>Cohort Details</h2>
 
 <div>
     <h4>Cohort</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Cohort.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Cohort.Name)
+        </dd>
+        <dd>
+            <ul>
+                @foreach (Student student in Model.Students)
+                {
+                    <li>@student.FirstName @student.LastName</li>
+                }
+            </ul>
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.CohortId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Cohort.CohortId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
