@@ -33,15 +33,32 @@ namespace StudentExercisesWebApp.Controllers
             {
                 return NotFound();
             }
-
+            // get single exercise with list of assigned students
             var exercise = await _context.Exercises
+                .Include(s => s.StudentExercises)
                 .FirstOrDefaultAsync(m => m.ExerciseId == id);
+
             if (exercise == null)
             {
                 return NotFound();
             }
 
-            return View(exercise);
+            // get all assigned exercises from StudentExercise join table
+            IEnumerable<StudentExercise> studentExercises =
+                 _context.StudentExercise
+                    .Include(se => se.Student)
+                    .Where(se => se.ExerciseId == exercise.ExerciseId);
+
+            // get exercise details (name, language, etc.)
+            IEnumerable<Student> students = studentExercises.Select(s => s.Student);
+
+            ExerciseDetailViewModel viewmodel = new ExerciseDetailViewModel()
+            {
+                Exercise = exercise,
+                Students = students.ToList()
+            };
+
+            return View(viewmodel);
         }
 
         // GET: Exercises/Create
@@ -66,13 +83,13 @@ namespace StudentExercisesWebApp.Controllers
                 foreach (int studentId in model.SelectedStudents)
                 {
                     // create a new instance of StudentExercise for each selected student
-                    StudentExercise newStudent = new StudentExercise()
+                    StudentExercise newSE = new StudentExercise()
                     {
                         ExerciseId = model.Exercise.ExerciseId,
                         StudentId = studentId
                     };
                     // insert each selected exercise to the StudentExercise join table in db
-                    _context.Add(newStudent);
+                    _context.Add(newSE);
                 }
 
                 await _context.SaveChangesAsync();

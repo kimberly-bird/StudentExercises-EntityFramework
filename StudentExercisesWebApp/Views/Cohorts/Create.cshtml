@@ -1,10 +1,10 @@
-﻿@model StudentExercisesWebApp.Models.ViewModels.CreateExerciseViewModel
+﻿@model StudentExercisesWebApp.Models.Cohort
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h2>Create a New Exercise</h2>
+<h2>Add a New Exercise</h2>
 
 <h4>Cohort</h4>
 <hr />
@@ -13,19 +13,9 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Exercise.Name" class="control-label"></label>
-                <input asp-for="Exercise.Name" class="form-control" />
-                <span asp-validation-for="Exercise.Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Exercise.Language" class="control-label"></label>
-                <input asp-for="Exercise.Language" class="form-control" />
-                <span asp-validation-for="Exercise.Language" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SelectedStudents" class="control-label"></label>
-                <select multiple asp-for="SelectedStudents" class="form-control" asp-items="@Model.AvailableStudents"></select>
-                <span asp-validation-for="SelectedStudents" class="text-danger"></span>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />

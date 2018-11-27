@@ -35,7 +35,7 @@ namespace StudentExercisesWebApp.Controllers
                 return NotFound();
             }
 
-            // get single student with cohort and StudentExercises 
+            // get single student with cohort, exercises, StudentExercises 
             var student = await _context.Students
                 .Include(s => s.Cohort)
                 .Include(s => s.StudentExercises)
