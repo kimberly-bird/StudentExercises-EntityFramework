@@ -35,21 +35,40 @@ namespace StudentExercisesWebApp.Controllers
                 return NotFound();
             }
 
+            // get single student with cohort and StudentExercises 
             var student = await _context.Students
                 .Include(s => s.Cohort)
+                .Include(s => s.StudentExercises)
                 .FirstOrDefaultAsync(m => m.StudentId == id);
+
             if (student == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            // get all single students' assigned exercises from StudentExercise join table
+            IEnumerable<StudentExercise> studentExercises =
+                 _context.StudentExercise
+                    .Include(se => se.Exercise)
+                    .Where(se => se.StudentId == student.StudentId);
+
+            // get exercise details (name, language, etc.)
+            IEnumerable<Exercise> exercises = studentExercises.Select(se => se.Exercise);
+
+            StudentDetailViewModel viewmodel = new StudentDetailViewModel()
+            {
+                Student = student,
+                // put exercise details into a list
+                Exercises = exercises.ToList()
+            };
+
+            return View(viewmodel);
         }
 
         // GET: Students/Create
+        [HttpGet]
         public IActionResult Create()
         {
-            ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name");
             CreateStudentViewModel model = new CreateStudentViewModel(_context);
             return View(model);
         }
@@ -63,17 +82,22 @@ namespace StudentExercisesWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // insert new student into db
                 _context.Add(model.Student);
 
+                // loop over each selected exercise
                 foreach (int exerciseId in model.SelectedExercises)
                 {
+                    // create a new instance of StudentExercise for each selected exercise
                     StudentExercise newSE = new StudentExercise()
                     {
                         StudentId = model.Student.StudentId,
                         ExerciseId = exerciseId
                     };
+                    // insert each selected exercise to the StudentExercise join table in db
                     _context.Add(newSE);
                 }
+                // once complete with db updates, save changes to the db
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
